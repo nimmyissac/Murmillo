@@ -13,13 +13,15 @@ module.exports = function(userSoln, username, probID, callback) {
     // 2) execute user's solution stored in a file
     console.log('running syntax checker now')
 
-    child_process.execFile('node', [userSolnUrl], function(error, success) {
+    child_process.execFile('node', [userSolnUrl], function(error, success, stderr) {
       // make result available via callback
-      callback(success, error);
-
+      if(error){
+        var errorMessage = (stderr.substring(stderr.indexOf('SyntaxError'), stderr.indexOf('at')));
+      }
+      callback(success, error, errorMessage);
       // delete file after checker is done
       fs.unlinkSync(userSolnUrl);
-
+      //.substring(stderr.indexOf('SyntaxError'),stderr.indexOf('\n'))
     });
 
   } catch (err) {
